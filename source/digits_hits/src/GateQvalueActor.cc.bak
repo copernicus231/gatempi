@@ -1,0 +1,610 @@
+/*----------------------
+   GATE version name: gate_v6
+
+   Copyright (C): OpenGATE Collaboration
+
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See GATE/LICENSE.txt for further details
+----------------------*/
+
+
+/*
+  \brief Class GateQvalueActor : 
+  \brief 
+*/
+
+
+
+#include "GateQvalueActor.hh"
+#include "GateMiscFunctions.hh"
+#include "G4VProcess.hh"
+//-----------------------------------------------------------------------------
+GateQvalueActor::GateQvalueActor(G4String name, G4int depth):
+  GateVImageActor(name,depth) {
+
+  mCurrentEvent=-1;
+  mDeltaKin = 0.;
+  mNSec=0;
+  pFragList=0;
+  pMessenger = new GateImageActorMessenger(this);
+
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+/// Destructor 
+GateQvalueActor::~GateQvalueActor()  {
+
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+/// Construct
+void GateQvalueActor::Construct() {
+  GateVImageActor::Construct();
+
+  // Enable callbacks
+  EnableBeginOfRunAction(true);
+  EnableBeginOfEventAction(true);
+  EnableEndOfEventAction(true);
+  EnablePreUserTrackingAction(true);
+  EnablePostUserTrackingAction(true);
+  EnableUserSteppingAction(true);
+ 
+  // Output Filename
+  mProdFilename = G4String(removeExtension(mSaveFilename))+"-Secondaries.root";
+  mSecondariesFilename = G4String(removeExtension(mSaveFilename))+"-Secondaries.txt";
+
+   pTfile = new TFile(mProdFilename,"RECREATE");
+   pFragList = new TTree("FragmentList","List of fragments");
+   pFragList->Branch("ParticleName", pname ,"ParticleName/C");
+   pFragList->Branch("ProductionProcess", pro,"ProductionProcess/C");
+   pFragList->Branch("Ekine", &e,"Ekine/F");
+   pFragList->Branch("Weight", &w,"Weight/F");
+   pFragList->Branch("X", &x,"X/F");
+   pFragList->Branch("Y", &y,"Y/F");
+   pFragList->Branch("Z", &z,"Z/F");
+   pFragList->Branch("dX", &dx,"dX/F");
+   pFragList->Branch("dY", &dy,"dY/F");
+   pFragList->Branch("dZ", &dz,"dZ/F");
+   //pFragList->Branch("ProductionVolume", vol,"ProductionVolume/C");
+   
+
+
+
+   pFragPos = new TH2F("fragmentPosition","Fragment production position",3,0,1,100,-250,250);
+   pFragPos->SetYTitle("Position (mm)");
+   pFragPos->SetBit(TH1::kCanRebin);
+
+   pFrag = new TH1F("fragments","Fragment production",3,0,1);
+   pFrag->SetXTitle("Fragment name");
+   pFrag->SetBit(TH1::kCanRebin);
+
+   pFragEne = new TH2F("fragmentEnePosition","Fragment production in function of the primary energy",3,0,1,23,0,230);
+   pFragEne->SetYTitle("Energy (MeV)");
+   pFragEne->SetBit(TH1::kCanRebin);
+ 
+  
+ 
+   pFragPos->Fill("e- Ioni",0.,0.);
+   pFrag->Fill("e- Ioni",0.);
+   pFragEne->Fill("e- Ioni",0.,0.);
+
+   pFragPos->Fill("e-",0.,0.);
+   pFrag->Fill("e-",0.);
+   pFragEne->Fill("e-",0.,0.);
+  
+   pFragPos->Fill("e+",0.,0.);
+   pFrag->Fill("e+",0.);
+   pFragEne->Fill("e+",0.,0.);
+ 
+   pFragPos->Fill("e+ Decay",0.,0.);
+   pFrag->Fill("e+ Decay",0.);
+   pFragEne->Fill("e+ Decay",0.,0.);
+ 
+   pFragPos->Fill("gamma (EM)",0.,0.);
+   pFrag->Fill("gamma (EM)",0.);
+   pFragEne->Fill("gamma (EM)",0.,0.);
+
+   pFragPos->Fill("gamma (HAD)",0.,0.);
+   pFrag->Fill("gamma (HAD)",0.);
+   pFragEne->Fill("gamma (HAD)",0.,0.);
+
+   pFragPos->Fill("gamma Decay",0.,0.);
+   pFrag->Fill("gamma Decay",0.);
+   pFragEne->Fill("gamma Decay",0.,0.);
+
+   pFragPos->Fill("gamma (others)",0.,0.);
+   pFrag->Fill("gamma (others)",0.);
+   pFragEne->Fill("gamma (others)",0.,0.);
+
+   pFragPos->Fill("proton",0.,0.);
+   pFrag->Fill("proton",0.);
+   pFragEne->Fill("proton",0.,0.);
+
+   pFragPos->Fill("neutron",0.,0.);
+   pFrag->Fill("neutron",0.);
+   pFragEne->Fill("neutron",0.,0.);
+
+   pFragPos->Fill("alpha",0.,0.);
+   pFrag->Fill("alpha",0.);
+   pFragEne->Fill("alpha",0.,0.);
+
+   pFragPos->Fill("deuteron",0.,0.);
+   pFrag->Fill("deuteron",0.);
+   pFragEne->Fill("deuteron",0.,0.);
+
+   pFragPos->Fill("triton",0.,0.);
+   pFrag->Fill("triton",0.);
+   pFragEne->Fill("triton",0.,0.);
+
+   pFragPos->Fill("He3",0.,0.);
+   pFrag->Fill("He3",0.);
+   pFragEne->Fill("He3",0.,0.);
+
+   pFragPos->Fill("He3[0.0]",0.,0.);
+   pFrag->Fill("He3[0.0]",0.);
+   pFragEne->Fill("He3[0.0]",0.,0.);
+
+   pFragPos->Fill("He4[0.0]",0.,0.);
+   pFrag->Fill("He4[0.0]",0.);
+   pFragEne->Fill("He4[0.0]",0.,0.);
+
+   pFragPos->Fill("He5[0.0]",0.,0.);
+   pFrag->Fill("He5[0.0]",0.);
+   pFragEne->Fill("He5[0.0]",0.,0.);
+
+
+   pFragPos->Fill("Li5[0.0]",0.,0.);
+   pFrag->Fill("Li5[0.0]",0.);
+   pFragEne->Fill("Li5[0.0]",0.,0.);
+
+   pFragPos->Fill("Li6[0.0]",0.,0.);
+   pFrag->Fill("Li6[0.0]",0.);
+   pFragEne->Fill("Li6[0.0]",0.,0.);
+
+   pFragPos->Fill("Li7[0.0]",0.,0.);
+   pFrag->Fill("Li7[0.0]",0.);
+   pFragEne->Fill("Li7[0.0]",0.,0.);
+
+
+   pFragPos->Fill("Be7[0.0]",0.,0.);
+   pFrag->Fill("Be7[0.0]",0.);
+   pFragEne->Fill("Be7[0.0]",0.,0.);
+
+   pFragPos->Fill("Be8[0.0]",0.,0.);
+   pFrag->Fill("Be8[0.0]",0.);
+   pFragEne->Fill("Be8[0.0]",0.,0.);
+
+
+   pFragPos->Fill("B8[0.0]",0.,0.);
+   pFrag->Fill("B8[0.0]",0.);
+   pFragEne->Fill("B8[0.0]",0.,0.);
+
+   pFragPos->Fill("B9[0.0]",0.,0.);
+   pFrag->Fill("B9[0.0]",0.);
+   pFragEne->Fill("B9[0.0]",0.,0.);
+
+   pFragPos->Fill("B10[0.0]",0.,0.);
+   pFrag->Fill("B10[0.0]",0.);
+   pFragEne->Fill("B10[0.0]",0.,0.);
+
+   pFragPos->Fill("B11[0.0]",0.,0.);
+   pFrag->Fill("B11[0.0]",0.);
+   pFragEne->Fill("B11[0.0]",0.,0.);
+
+  
+   pFragPos->Fill("C11[0.0]",0.,0.);
+   pFrag->Fill("C11[0.0]",0.);
+   pFragEne->Fill("C11[0.0]",0.,0.);
+
+   pFragPos->Fill("C12[0.0]",0.,0.);
+   pFrag->Fill("C12[0.0]",0.);
+   pFragEne->Fill("C12[0.0]",0.,0.);
+
+   pFragPos->Fill("C13[0.0]",0.,0.);
+   pFrag->Fill("C13[0.0]",0.);
+   pFragEne->Fill("C13[0.0]",0.,0.);
+
+   pFragPos->Fill("C14[0.0]",0.,0.);
+   pFrag->Fill("C14[0.0]",0.);
+   pFragEne->Fill("C14[0.0]",0.,0.);
+
+
+   pFragPos->Fill("N13[0.0]",0.,0.);
+   pFrag->Fill("N13[0.0]",0.);
+   pFragEne->Fill("N13[0.0]",0.,0.);
+
+   pFragPos->Fill("N14[0.0]",0.,0.);
+   pFrag->Fill("N14[0.0]",0.);
+   pFragEne->Fill("N14[0.0]",0.,0.);
+
+   pFragPos->Fill("N15[0.0]",0.,0.);
+   pFrag->Fill("N15[0.0]",0.);
+   pFragEne->Fill("N15[0.0]",0.,0.);
+
+   pFragPos->Fill("N16[0.0]",0.,0.);
+   pFrag->Fill("N16[0.0]",0.);
+   pFragEne->Fill("N16[0.0]",0.,0.);
+
+
+   pFragPos->Fill("O14[0.0]",0.,0.);
+   pFrag->Fill("O14[0.0]",0.);
+   pFragEne->Fill("O14[0.0]",0.,0.);
+
+   pFragPos->Fill("O15[0.0]",0.,0.);
+   pFrag->Fill("O15[0.0]",0.);
+   pFragEne->Fill("O15[0.0]",0.,0.);
+
+   pFragPos->Fill("O16[0.0]",0.,0.);
+   pFrag->Fill("O16[0.0]",0.);
+   pFragEne->Fill("O16[0.0]",0.,0.);
+
+   pFragPos->Fill("O17[0.0]",0.,0.);
+   pFrag->Fill("O17[0.0]",0.);
+   pFragEne->Fill("O17[0.0]",0.,0.);
+
+   pFragPos->Fill("O18[0.0]",0.,0.);
+   pFrag->Fill("O18[0.0]",0.);
+   pFragEne->Fill("O18[0.0]",0.,0.);
+
+
+   pFragPos->Fill("F15[0.0]",0.,0.);
+   pFrag->Fill("F15[0.0]",0.);
+   pFragEne->Fill("F15[0.0]",0.,0.);
+
+   pFragPos->Fill("F16[0.0]",0.,0.);
+   pFrag->Fill("F16[0.0]",0.);
+   pFragEne->Fill("F16[0.0]",0.,0.);
+
+   pFragPos->Fill("F17[0.0]",0.,0.);
+   pFrag->Fill("F17[0.0]",0.);
+   pFragEne->Fill("F17[0.0]",0.,0.);
+
+   pFragPos->Fill("F18[0.0]",0.,0.);
+   pFrag->Fill("F18[0.0]",0.);
+   pFragEne->Fill("F18[0.0]",0.,0.);
+
+
+
+
+
+ /*pFragPosPrim = new TH2F("fragmentPositionPrim","Primary fragment production position",3,0,1,100,-250,250);
+   pFragPosPrim->SetYTitle("Position (mm)");
+   pFragPosPrim->SetBit(TH1::kCanRebin);
+
+   pFragPrim = new TH1F("fragmentsPrim","Primary fragment production",3,0,1);
+   pFragPrim->SetXTitle("Fragment name");
+   pFragPrim->SetBit(TH1::kCanRebin);
+
+   pFragEnePrim = new TH2F("fragmentEnePositionPrim","Primary fragment production in function of the primary energy",3,0,1,23,0,230);
+   pFragEnePrim->SetYTitle("Energy (MeV)");
+   pFragEnePrim->SetBit(TH1::kCanRebin);
+ 
+   pFragPosSec = new TH2F("fragmentPosition","Secondaries fragment production position",3,0,1,100,-250,250);
+   pFragPosSec->SetYTitle("Position (mm)");
+   pFragPosSec->SetBit(TH1::kCanRebin);
+
+   pFragSec = new TH1F("fragments","Secondaries fragment production",3,0,1);
+   pFragSec->SetXTitle("Fragment name");
+   pFragSec->SetBit(TH1::kCanRebin);
+
+   pFragEneSec = new TH2F("fragmentEnePosition","Secondaries fragment production in function of the primary energy",3,0,1,23,0,230);
+   pFragEneSec->SetYTitle("Energy (MeV)");
+   pFragEneSec->SetBit(TH1::kCanRebin);*/
+
+ /*pFragPosPrim->Fill("gamma",0,0);
+   pFragPrim->Fill("gamma",0,0);
+   pFragEnePrim->Fill("gamma",0,0);
+   pFragPosSec->Fill("gamma",0,0);
+   pFragSec->Fill("gamma",0,0);
+   pFragEneSec->Fill("gamma",0,0);*/
+
+   /*pFragPosPrim->Fill("neutron",0,0);
+   pFragPrim->Fill("neutron",0,0);
+   pFragEnePrim->Fill("neutron",0,0);
+   pFragPosSec->Fill("neutron",0,0);
+   pFragSec->Fill("neutron",0,0);
+   pFragEneSec->Fill("neutron",0,0);*/
+
+   /*pFragPosPrim->Fill("proton",0,0);
+   pFragPrim->Fill("proton",0,0);
+   pFragEnePrim->Fill("proton",0,0);
+   pFragPosSec->Fill("proton",0,0);
+   pFragSec->Fill("proton",0,0);
+   pFragEneSec->Fill("proton",0,0);*/
+
+  /*pFragPosPrim->Fill("e+",0,0);
+   pFragPrim->Fill("e+",0,0);
+   pFragEnePrim->Fill("e+",0,0);
+   pFragPosSec->Fill("e+",0,0);
+   pFragSec->Fill("e+",0,0);
+   pFragEneSec->Fill("e+",0,0);*/
+
+/* pFragPosPrim->Fill("e-",0,0);
+   pFragPrim->Fill("e-",0,0);
+   pFragEnePrim->Fill("e-",0,0);
+   pFragPosSec->Fill("e-",0,0);
+   pFragSec->Fill("e-",0,0);
+   pFragEneSec->Fill("e-",0,0);*/
+
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+/// Save data
+void GateQvalueActor::SaveData() {
+  
+  pTfile->Write();
+  pTfile->Close();
+
+  G4cout<<std::endl;
+  G4cout<<std::endl;
+
+  G4cout<<"Delta Kin = "<<mDeltaKin<<G4endl;
+
+  G4cout<<std::endl;
+  G4cout<<std::endl;
+
+  for (std::map<G4String,G4double>::iterator it=listOfEmiss.begin(); it!=listOfEmiss.end(); it++)
+    G4cout<<(*it).first<<"  "<<(*it).second<<std::endl;
+
+  G4cout<<std::endl;
+  G4cout<<std::endl;
+
+  for (std::map<G4String,G4int>::iterator it=listOfGamma.begin(); it!=listOfGamma.end(); it++)
+    G4cout<<(*it).first<<"  "<<(*it).second<<std::endl;
+
+
+  //std::map<G4String,G4int>::iterator it;
+
+ /* std::ofstream os;
+  OpenFileOutput(mSecondariesFilename, os);
+  for (it=listOfSecondaries.begin(); it!=listOfSecondaries.end(); it++)
+    os<<(*it).first<<"  "<<(*it).second<<std::endl;
+ 
+  if (!os) {
+    GateMessage("Output",1,"Error Writing file: " <<mSecondariesFilename << G4endl);
+  }
+  os.flush();
+  os.close();*/
+
+ 
+
+
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void GateQvalueActor::ResetData() {
+  
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void GateQvalueActor::UserSteppingActionInVoxel(const int /*index*/, const G4Step* step)
+{
+  GateInfoStep * tempoInfoStep = new GateInfoStep();
+  tempoInfoStep->mPosition = step->GetPostStepPoint()->GetPosition();
+  tempoInfoStep->mEnergy = step->GetPreStepPoint()->GetKineticEnergy();
+  tempoInfoStep->nParentID = step->GetTrack()->GetTrackID();
+  listOfPositionAndEnergy3.push_back(tempoInfoStep);
+
+  if(step->GetTrack()->GetTrackID()==1){
+    //listOfPositionAndEnergy[step->GetPreStepPoint()->GetPosition()] = step->GetPreStepPoint()->GetKineticEnergy();
+    listOfPositionAndEnergy[step->GetPostStepPoint()->GetPosition()] = step->GetPostStepPoint()->GetKineticEnergy();
+  }
+
+    G4TrackVector* trackVector=step->GetSecondary();
+ int k = 0;
+ //G4cout<<"test = "<<step->GetTrack()->GetTrackStatus()<<G4endl;
+//G4cout<<step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()<<G4endl;
+  if(step->GetPostStepPoint()->GetProcessDefinedStep()){
+// if(step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName().find("Inelastic")<1000)
+     if(!(step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName().find("Ioni")<1000))
+{
+    double energyKinPre =  step->GetPreStepPoint()->GetKineticEnergy();
+    double energyKinPost = step->GetPostStepPoint()->GetKineticEnergy();
+    double energyKinSec = 0.;
+    int nSec = step->GetSecondary()->size();
+     G4cout<<nSec<<G4endl;
+
+    k = 0;
+    
+    for(std::vector<G4Track*>::iterator it = trackVector->begin(); it !=trackVector->end();it++ )
+      {
+        
+	G4cout<<"Second no = "<<k<<"   "<<(*it)->GetDefinition()->GetParticleName()<<"   "<<mNSec ; 
+        if(k>=mNSec) G4cout<<"  OK    ";
+	else G4cout<<G4endl;
+	if(k>=mNSec){
+           energyKinSec+= (*it)->GetKineticEnergy();
+	   G4cout<< (*it)->GetKineticEnergy()  <<G4endl;
+           
+           if((*it)->GetDefinition()->GetParticleName()=="gamma"){
+             if(listOfGamma[step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()]) listOfGamma[step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()]+=1;
+	     else listOfGamma[step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()]=1;
+	   }
+        }
+	k++;
+      }
+
+    /* for(int i = 0;i<nSec;i++){
+       energyKinSec+= trackVector[i]->GetKineticEnergy();
+       }*/
+    double en = energyKinPre-energyKinPost-energyKinSec-step->GetTotalEnergyDeposit();
+    mDeltaKin += energyKinPre-energyKinPost-energyKinSec-step->GetTotalEnergyDeposit();
+    G4cout<<"test = "<<step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()<<"  "<< step->GetTotalEnergyDeposit()<<"  "<<en<<G4endl;
+    if(listOfEmiss[step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()]) listOfEmiss[step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()]+=en;
+    else listOfEmiss[step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()]=en;
+
+ }
+  }
+
+    k = 0;
+    for(std::vector<G4Track*>::iterator it = trackVector->begin(); it !=trackVector->end();it++ )
+      {
+        
+        if(k>=mNSec) mNSec++;
+	k++;
+
+      }
+   
+  // nStep++;
+  //listOfPositionAndEnergy2[step->GetPostStepPoint()->GetPosition()] = step->GetPostStepPoint()->GetKineticEnergy();
+  //listOfPositionAndEnergy
+  //step->GetTrack()
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void GateQvalueActor::BeginOfRunAction(const G4Run * ) { 
+  GateDebugMessage("Actor", 3, "GateQvalueActor -- Begin of Run" << G4endl);
+  ResetData();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// Callback at each event
+void GateQvalueActor::BeginOfEventAction(const G4Event * ) { 
+  mCurrentEvent++;  
+  listOfPositionAndEnergy.clear();
+  //nStep = 0;
+  GateDebugMessage("Actor", 3, "GateQvalueActor -- Begin of Event: "<<mCurrentEvent << G4endl);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// Callback at each event
+void GateQvalueActor::EndOfEventAction(const G4Event * ) { 
+
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateQvalueActor::UserPreTrackActionInVoxel(const  int /*index*/, const G4Track* t)
+{
+  listOfPositionAndEnergy2.clear();
+  mNSec = 0;
+
+  //  if(listOfSecondaries[t->GetDefinition()->GetParticleName()])listOfSecondaries[t->GetDefinition()->GetParticleName()]+=1;
+  // else listOfSecondaries[t->GetDefinition()->GetParticleName()]=1;
+  const G4VProcess* process = t->GetCreatorProcess();
+  if(process){
+    //if(process->GetProcessTypeName(process->GetProcessType())=="Hadronic"){
+    //if(process-> GetProcessName()=="RadioactiveDecay"){
+    /*  if(t->GetDefinition()->GetParticleName()=="gamma" && process->GetProcessName().find("Inelastic")>1000 && process->GetProcessTypeName(process->GetProcessType()).find("Electromagnetic")>1000){
+	G4cout<<"  "<<G4endl;  
+	G4cout<<"--------------------------------------------------------"<<G4endl;  
+	G4cout<<"NEW Track"<<G4endl;  
+	G4cout<<"Particle Name: "<<t->GetDefinition()->GetParticleName() <<G4endl;
+	G4cout<<"Particle ID/Parent ID: "<<t->GetTrackID() <<"  "<<t->GetParentID()<<G4endl;
+	//const G4VProcess* process = t->GetCreatorProcess();
+	if(process){
+	G4cout<<"Process Name: "<<process-> GetProcessName()<<G4endl;
+	G4cout<<"ProcessSubType: "<<process->GetProcessSubType()<<G4endl;
+	G4cout<<"GetProcessType Name: "<<process->GetProcessTypeName(process->GetProcessType())<<G4endl;
+	G4cout<<"GetParticleVertx: "<<t->GetVertexPosition()<<G4endl;
+	G4cout<<"GetParticleEnergy: "<<t->GetKineticEnergy()<<G4endl;
+	}
+	G4cout<<"--------------------------------------------------------"<<G4endl;  
+	}*/
+  }
+  //std::map<G4ThreeVector,G4double>::iterator it;
+  std::vector<GateInfoStep* >::iterator it;
+
+  bool findStep = false;
+  G4double energy=0.;
+
+
+  for (it=listOfPositionAndEnergy3.begin(); it!=listOfPositionAndEnergy3.end(); it++)
+    {
+      if((*it)->nParentID == t->GetParentID()){
+	if( fabs((*it)->mPosition.x()-t->GetVertexPosition().x())<0.0001 && 
+	    fabs((*it)->mPosition.y()-t->GetVertexPosition().y())<0.0001 &&
+	    fabs((*it)->mPosition.z()-t->GetVertexPosition().z())<0.0001 )
+	  {
+	    findStep = true;
+	    //G4cout<<"Particle OK: "<<t->GetDefinition()->GetParticleName()<<G4endl;
+	    energy = (*it)->mEnergy;
+	  }
+	//G4cout<<fabs((*it).first.x()-t->GetVertexPosition().x())<<"  "<<fabs((*it).first.y()-t->GetVertexPosition().y())<<"  "<<fabs((*it).first.z()-t->GetVertexPosition().z())<<G4endl;
+
+      }
+    }
+  //  if(!findStep) {
+  //    G4cout<<"Particle PAS OK: "<<t->GetDefinition()->GetParticleName()<<G4endl;
+  //G4cout<<fabs((*it).first.x()-t->GetVertexPosition().x())<<"  "<<fabs((*it).first.y()-t->GetVertexPosition().y())<<"  "<<fabs((*it).first.z()-t->GetVertexPosition().z())<<G4endl;
+  // }
+
+
+  //if(listOfPositionAndEnergy[t->GetVertexPosition()]) G4cout<<"Particle OK: "<<t->GetDefinition()->GetParticleName()<<G4endl;
+  //else G4cout<<"Particle PAS OK: "<<t->GetDefinition()->GetParticleName()<<G4endl;
+
+
+  // G4cout<<t->GetVertexPosition().z()<<G4endl;
+ 	
+  if(t->GetTrackID() != 1)
+    {
+      G4String name = t->GetDefinition()->GetParticleName();
+      if(process){
+	if(!(name=="e-" && process->GetProcessName().find("Ionisation")<1000)) {
+	  G4String st = "";
+	  sscanf(name.c_str(), "%s",pname);  
+	  G4ThreeVector localPosition = t->GetVertexPosition();
+	  x  = localPosition.x();
+	  y  = localPosition.y();
+	  z  = localPosition.z();
+	  G4ThreeVector localMomentum = t->GetVertexMomentumDirection();
+	  dx = localMomentum.x();
+	  dy = localMomentum.y();
+	  dz = localMomentum.z();
+	  e  = t->GetVertexKineticEnergy();
+	  w  = t->GetWeight() ;
+	  if(t->GetCreatorProcess() )
+	    st =  process->GetProcessName();
+	  sscanf(st.c_str(), "%s",pro); 
+	  pFragList->Fill();
+	}
+      }
+    }
+
+
+  if(t->GetTrackID() != 1  && t->GetParentID() == 1){
+    G4String name = t->GetDefinition()->GetParticleName();
+
+    //const G4VProcess* process = t->GetCreatorProcess();
+    if(process){
+      //G4cout<<process->GetProcessName()<<"  "<<process->GetProcessName().find("Decay")<<G4endl;
+      if(name=="e-" && process->GetProcessName().find("Ionisation")<1000) {name += " Ioni";}
+      if(name=="e+" && process->GetProcessName().find("Decay")<1000) {name += " Decay";}
+      if(name=="gamma"){
+	if(process->GetProcessName().find("Decay")<1000) {name += " Decay";}
+        else if(process->GetProcessName().find("Inelastic")<1000) {name += " (HAD)";}
+        else if(process->GetProcessTypeName(process->GetProcessType()).find("Electromagnetic")<1000) {name += " (EM)";}
+	else {name += " (others)";}
+      }
+    }
+    pFragPos->Fill(name,t->GetVertexPosition().z(),1);
+    pFrag->Fill(name,1);
+    pFragEne->Fill(name,energy,1);
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateQvalueActor::UserPostTrackActionInVoxel(const int /*index*/, const G4Track* /*t*/)
+{
+
+
+  //listOfPositionAndEnergy3[t->GetTrackID()] = listOfPositionAndEnergy2;
+}
+//-----------------------------------------------------------------------------
+
+
+

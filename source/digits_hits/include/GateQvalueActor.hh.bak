@@ -1,0 +1,123 @@
+/*----------------------
+   GATE version name: gate_v6
+
+   Copyright (C): OpenGATE Collaboration
+
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See GATE/LICENSE.txt for further details
+----------------------*/
+
+
+/*!
+  \class  GateSecondaryProductionActor
+  \author thibault.frisson@creatis.insa-lyon.fr
+          laurent.guigues@creatis.insa-lyon.fr
+	  david.sarrut@creatis.insa-lyon.fr
+ */
+
+#ifndef GATEQVALUEACTOR_HH
+#define GATEQVALUEACTOR_HH
+
+#include "GateVImageActor.hh"
+#include "GateActorManager.hh"
+
+#include "G4UnitsTable.hh"
+
+#include "GateImageActorMessenger.hh"
+
+#include "GateInfoParticles.hh"
+
+#include "TROOT.h"
+#include "TFile.h"
+#include "TH1.h"
+#include "TH2.h"
+#include "TTree.h"
+
+class GateQvalueActor : public GateVImageActor
+{
+ public: 
+  
+  //-----------------------------------------------------------------------------
+  // Actor name
+
+  virtual ~GateQvalueActor();
+
+  FCT_FOR_AUTO_CREATOR_ACTOR(GateQvalueActor)
+
+  //-----------------------------------------------------------------------------
+  // Constructs the sensor
+  virtual void Construct();
+
+  virtual void BeginOfRunAction(const G4Run*r);
+  virtual void BeginOfEventAction(const G4Event * event);
+  virtual void EndOfEventAction(const G4Event * event);
+
+  virtual void UserSteppingActionInVoxel(const int /*index*/, const G4Step* /*step*/);
+  virtual void UserPreTrackActionInVoxel(const  int index, const G4Track* t) ;
+  virtual void UserPostTrackActionInVoxel(const int index, const G4Track* t) ;
+
+ /// Saves the data collected to the file
+  virtual void SaveData();
+  virtual void ResetData();
+
+  virtual void clear(){ResetData();}
+  virtual void Initialize(G4HCofThisEvent*){}
+  virtual void EndOfEvent(G4HCofThisEvent*){}
+
+
+protected:
+  GateQvalueActor(G4String name, G4int depth=0);
+  GateImageActorMessenger * pMessenger;
+
+  int mCurrentEvent;
+
+
+  std::vector<GateInfoParticles*> listOfSecondaries;
+
+  G4String mProdFilename;
+  G4String mSecondariesFilename;
+
+  TFile * pTfile;
+
+  TH2F * pFragPos;
+  TH1F * pFrag;
+  TH2F * pFragEne;
+
+  TTree * pFragList;
+  Char_t  pname[64];
+  float x;
+  float y;
+  float z;
+  float dx;
+  float dy;
+  float dz;
+  float e;
+  float w;
+  //Char_t vol[256];
+  Char_t pro[256];
+
+  double mDeltaKin;
+
+ /* TH2F * pFragPosPrim;
+  TH1F * pFragPrim;
+  TH2F * pFragEnePrim;
+
+  TH2F * pFragPosSec;
+  TH1F * pFragSec;
+  TH2F * pFragEneSec;*/
+
+  std::map<G4ThreeVector,G4double> listOfPositionAndEnergy;
+  std::map<G4ThreeVector,G4double> listOfPositionAndEnergy2;
+  std::vector<GateInfoStep* > listOfPositionAndEnergy3;
+  std::map<G4String,G4double> listOfEmiss;
+  std::map<G4String,G4int> listOfGamma;
+
+  int mNSec;
+
+  //G4int nStep;
+};
+
+MAKE_AUTO_CREATOR_ACTOR(QvalueActor,GateQvalueActor)
+
+#endif

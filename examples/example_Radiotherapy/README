@@ -1,0 +1,108 @@
+
+# Folder Novice_1
+  ---------------
+  ---------------
+  
+This example represents the simulation of a carbon ion / proton 
+irradiation covering an artificial target inside a CT patient image. 
+
+
+------------
+To start this example : Users need to run the "radiotherapy.mac" file
+------------
+
+Data
+----
+
+All the input data are in 'data' folder, it contains : 
+- the image used in the simulation : patient1-2mm.hdr/img
+- material definition : patient1-HUmaterials.db
+- link between image labels and material : patient1-HU2mat.txt
+- These macros read the two
+  files Schneider2000MaterialsTable.txt and
+  Schneider2000DensitiesTable.txt
+
+Conversion from Hounsfield units to Geant4 materials
+----------------------------------------------------
+
+Method : see [schneider2000]. 
+Start with two Hounsfield (H) tables : 
+one relating H to material composition, one relating H to
+mass densities. Resulting G4 materials are built by associating with
+each H range in the first material table a mean density interpolated
+in the second table. A parameter 'DensityTolerance' allow to
+automatically split the H range composition into several material
+having the same composition but different densities.
+
+Warning : there is no CT calibration here. It is the user
+responsability to convert is own Hounsfields unit with a calibration
+curve.
+
+
+# Folder Novice_2
+  ---------------
+  ---------------
+
+- Example of a standard radiotherapy set-up
+- NRC spectrum from BEAM for an 18 MV Varian Clinac 2100 
+
+
+# Folder Novice_3
+  ---------------
+  ---------------
+- Example of a protontherapy set-up
+- Using the hadron therapy Standard PhysList
+
+# Folder Novice_4
+  ---------------
+  ---------------
+
+This example represents the simulation of a proton source in a beam line,
+using the PencilBeamScanning source.
+This source allows for representing the optical and energetical properties of the source.
+
+------------
+Outputs:
+- 4 phase spaces files (.root)
+- 1 depth-dose profile in water (.txt)
+> Additional root macro file is proposed to visualize the beam emmitances, spot size and energy spectrum
+from the ".root" files.
+------------
+
+------------
+To start this example: Users need to run the "mainMacro.mac" file
+------------
+
+------------
+To visualize the output using root: Users need to run the "PhS-Analysis.C" file
+------------
+
+
+# Folder Novice_5
+  ---------------
+  ---------------
+
+This example represents the simulation of a proton source based on a pencil beam scanning treatment plan
+using the TPSPencilBeamScanning source.
+This source allows for simulating a stack of single pencil beams.
+
+------------
+Data
+- artificial source model (Source-Properties.txt)
+- treatment plan (PlanDescriptionToGATE.txt)
+------------
+
+------------
+Outputs:
+- 1 phase spaces files (.root)
+> Additional root macro file is proposed to visualize the scored output
+from the ".root" files.
+------------
+
+------------
+To start this example: Users need to run the "mainMacro.mac" file
+------------
+
+------------
+To visualize the output using root: Users need to run the "PhS-Analysis.C" file
+------------
