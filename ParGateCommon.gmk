@@ -1,0 +1,4 @@
+ifdef GATE_PARALLEL_MPI
+CPPFLAGS += -DGATE_PARALLEL_MPI $(shell mpic++ --showme:compile)
+EXTRALIBS += $(shell mpic++ --showme:link)
+endif

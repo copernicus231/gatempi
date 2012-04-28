@@ -17,11 +17,11 @@ CPPFLAGS += -I../arf/include \
             -I../physics/include 	\
             -I../digits_hits/include \
             -I../general/include \
+            -I../parallel/include \
 
-	
 
 include $(G4INSTALL)/config/binmake.gmk
 
 include $(G4WORKDIR)/GateCommon.gmk
 
-
+include $(G4WORKDIR)/ParGateCommon.gmk

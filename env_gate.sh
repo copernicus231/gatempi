@@ -237,6 +237,12 @@ else
   echo "ECAT7 data output disabled"
 fi
 
+if [ -n "$GATE_PARALLEL_MPI" ] ; then
+  echo "GATE Parallel MPI enabled"
+else
+  echo "GATE Parallel MPI disabled"
+fi
+
 # Enable the use of ntuples 
 # This line probably is obsolete, as this variable does not seem to be used anywhere
 export G4ANALYSIS_USE_NTUPLE=1

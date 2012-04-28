@@ -3,7 +3,7 @@ name := Gate
 G4TARGET := $(name)
 G4EXLIB := true
 
-SUBDIRS := source/arf source/geometry source/general source/digits_hits source/physics 
+SUBDIRS := source/arf source/geometry source/general source/digits_hits source/physics source/parallel
 
 G4LIB_BUILD_SHARED=yes
 
@@ -14,6 +14,7 @@ G4BIN=$(G4WORKDIR)/bin
 all: makesub lib bin
 
 include $(G4WORKDIR)/GateCommon.gmk
+include $(G4WORKDIR)/ParGateCommon.gmk
 include $(G4INSTALL)/config/binmake.gmk
 
 CPPFLAGS += -I./source/arf/include \
@@ -21,6 +22,7 @@ CPPFLAGS += -I./source/arf/include \
             -I./source/physics/include 	\
             -I./source/digits_hits/include \
             -I./source/general/include \
+            -I./source/parallel/include \
 
 makesub:
 	@for dir in $(SUBDIRS); do ( \
