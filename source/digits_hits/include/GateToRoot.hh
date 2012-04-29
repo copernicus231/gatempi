@@ -200,7 +200,7 @@ public:
   //! Get the output file name
   const  G4String& GetFileName()             { return m_fileName; };
   //! Set the output file name
-  void   SetFileName(const G4String aName)   { m_fileName = aName + ".root"; };
+  virtual void   SetFileName(const G4String aName)   { m_fileName = aName + ".root"; };
   //! Get the output file path
   const char* GetFilePath()                  { return m_fileName.c_str(); };
 
@@ -292,6 +292,7 @@ private:
  G4String m_particleName;
  Char_t   m_volumeName[40],m_processName[40],m_parentparticleName[40];
     /* PY Descourt 08/09/2009 */
+ friend class GateToRootFactory;
 };
 //--------------------------------------------------------------------------
 

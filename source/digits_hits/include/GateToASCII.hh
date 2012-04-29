@@ -124,7 +124,7 @@ public:
   //! Get the output file name
   const  G4String& GetFileName()             { return m_fileName; };
   //! Set the output file name
-  void   SetFileName(const G4String aName)   { m_fileName = aName; };
+  virtual void   SetFileName(const G4String aName)   { m_fileName = aName; };
 
   void   RegisterNewCoincidenceDigiCollection(const G4String& aCollectionName,G4bool outputFlag);
   void   RegisterNewSingleDigiCollection(const G4String& aCollectionName,G4bool outputFlag);
@@ -152,6 +152,7 @@ private:
   G4String m_fileName;
 
   std::vector<VOutputChannel*>  m_outputChannelList;
+  friend class GateToASCIIFactory;
 };
 
 #endif

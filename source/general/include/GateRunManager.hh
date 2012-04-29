@@ -72,6 +72,7 @@ private :
   GateRunManagerMessenger* pMessenger;
   bool mIsGateInitializationCalled;
   GateHounsfieldToMaterialsBuilder * mHounsfieldToMaterialsBuilder;
+  friend class GateRunManagerFactory;
 };
 //----------------------------------------------------------------------------------------
 

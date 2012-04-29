@@ -21,7 +21,7 @@ class GateRandomEngine
 {
 
 public:
-  ~GateRandomEngine();
+  virtual ~GateRandomEngine();
   //! Used to create and access the GateRandomEngine
   static GateRandomEngine* GetInstance() {
     if (instance == 0)
@@ -33,11 +33,11 @@ public:
   inline CLHEP::HepRandomEngine* GetRandomEngine() {return theRandomEngine;}
   inline G4int GetVerbosity() {return theVerbosity;}
   inline void SetVerbosity(G4int aVerbosity) {theVerbosity=aVerbosity;}
-  void SetRandomEngine(const G4String& aName);
+  virtual void SetRandomEngine(const G4String& aName);
   void SetEngineSeed(const G4String& value);
   void resetEngineFrom(const G4String& file); //TC
   void ShowStatus();
-  void Initialize();
+  virtual void Initialize();
 
 private:
   // Private constructor because the class is a singleton
@@ -48,6 +48,7 @@ private:
   GateRandomEngineMessenger* theMessenger;
   G4String theSeed;
   G4String theSeedFile; //TC
+  friend class GateRandomEngineFactory;
 };
 
 #endif

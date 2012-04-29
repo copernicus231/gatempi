@@ -49,7 +49,7 @@ class GateSourceMgrMessenger;
 class GateSourceMgr
 {
 public:
-  ~GateSourceMgr();
+  virtual ~GateSourceMgr();
   
   // Need to be in header (not in cc)
   static GateSourceMgr* GetInstance() {
@@ -85,17 +85,17 @@ public:
   /** It is used internally by PrepareNextEvent
    * to decide which source has to be used for the current event.
    */
-  GateVSource* GetNextSource();
+  virtual GateVSource* GetNextSource();
 
   /** It is called by the PrimaryGeneratorAction
    * at each event, to prepare the Primary Vertices.
    */
-  G4int PrepareNextEvent( G4Event* event );
+  virtual G4int PrepareNextEvent( G4Event* event );
 
   /** It is called by the PrimaryGeneratorAction
    * at the beginning of the Run, to initialize the run-related variables.
    */
-  G4int PrepareNextRun( const G4Run* run );
+  virtual G4int PrepareNextRun( const G4Run* run );
 
   /** Used by the messenger, command .../source/list */
   void ListSources();
@@ -164,6 +164,8 @@ protected:
    G4int m_currentSourceID; // for detector mode
    GateVSource* m_fictiveSource; // idem
    G4int p_cK;
+private:
+   friend class GateSourceMgrFactory;
 
 };
 

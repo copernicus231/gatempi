@@ -25,11 +25,11 @@ class GatePrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
 public:
   GatePrimaryGeneratorAction();
-  ~GatePrimaryGeneratorAction();
+  virtual ~GatePrimaryGeneratorAction();
 
 public:
   void GeneratePrimaries(G4Event* anEvent);
-  void GenerateSimulationPrimaries(G4Event* anEvent);
+  virtual void GenerateSimulationPrimaries(G4Event* anEvent);
   void GenerateDigitisationPrimaries(G4Event* anEvent);
   void AddEvent();
   G4int GetEventNumber() { return m_nEvents; };
@@ -54,6 +54,7 @@ private:
   G4int    m_printModulo;
   G4int    m_nVerboseLevel;
   G4bool   m_useGPS;
+  friend class GatePrimaryGeneratorActionFactory;
 };
 
 #endif
