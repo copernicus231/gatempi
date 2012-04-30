@@ -34,6 +34,7 @@ void ParGateRandomEngine::Initialize() {
 		delete theRandomEngine;
 		SetRandomEngine("SprngMLFG");
 	}
+	GateRandomEngine::Initialize();
 }
 
 void ParGateRandomEngine::SetRandomEngine(const G4String& aName) {
