@@ -16,6 +16,11 @@
 #include "CLHEP/Random/JamesRandom.h"
 #include "CLHEP/Random/MTwistEngine.h"
 #include "CLHEP/Random/Ranlux64Engine.h"
+
+#ifdef GATE_PARALLEL_MPI
+#include "CLHEP/Random/SprngRandom.h"
+#endif
+
 #include <time.h>
 #include <unistd.h>
 #include "GateMessageManager.hh"
@@ -59,6 +64,9 @@ GateRandomEngine::~GateRandomEngine()
 //!< void SetRandomEngine
 void GateRandomEngine::SetRandomEngine(const G4String& aName) {
   //--- Here is the list of the allowed random engines to be used ---//
+#ifdef GATE_PARALLEL_MPI
+	using namespace CLHEP;
+#endif
   if (aName=="JamesRandom") {
     delete theRandomEngine;
     theRandomEngine = new CLHEP::HepJamesRandom();
@@ -71,6 +79,27 @@ void GateRandomEngine::SetRandomEngine(const G4String& aName) {
     delete theRandomEngine;
     theRandomEngine = new CLHEP::MTwistEngine();
   }
+#ifdef GATE_PARALLEL_MPI
+  else if(aName == "SprngLFG") {
+	  delete theRandomEngine;
+	  theRandomEngine = new SprngRandom(SprngRandom::LFG);
+  }else if(aName == "SprngLCG") {
+	  delete theRandomEngine;
+	  theRandomEngine = new SprngRandom(SprngRandom::LCG);
+  }else if(aName == "SprngLCG64") {
+	  delete theRandomEngine;
+	  theRandomEngine = new SprngRandom(SprngRandom::LCG64);
+  }else if(aName == "SprngCMRG") {
+	  delete theRandomEngine;
+	  theRandomEngine = new SprngRandom(SprngRandom::CMRG);
+  }else if(aName == "SprngMLFG") {
+	  delete theRandomEngine;
+	  theRandomEngine = new SprngRandom(SprngRandom::MLFG);
+  }else if(aName == "SprngPMLCG") {
+	  delete theRandomEngine;
+	  theRandomEngine = new SprngRandom(SprngRandom::PMLCG);
+  }
+#endif
   else {
     G4Exception("\n!!! GateRandomEngine::SetRandomEngine: "
                 "Unknown random engine '"+aName+"'. Computation aborted !!!\n");

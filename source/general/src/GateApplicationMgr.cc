@@ -23,6 +23,11 @@ See GATE/LICENSE.txt for further details
 #include "GateVSource.hh"
 #include "GateSourceMgr.hh"
 #include "GateOutputMgr.hh"
+#include "GateRandomEngineFactory.hh"
+
+#ifdef GATE_PARALLEL_MPI
+#include "ParGateMPI.hh"
+#endif
 
 GateApplicationMgr* GateApplicationMgr::instance = 0; 
 //------------------------------------------------------------------------------------------
@@ -308,7 +313,7 @@ void GateApplicationMgr::StartDAQ()
   ComputeTimeStop();
 
   // init sources if needed
-  GateSourceMgr::GetInstance()->Initialization();
+  GateSourceMgrFactory::GetSourceManager()->Initialization();
 
   if (listOfTimeSlice.size() == 0) {
     SetTimeStart(0.0*s);
@@ -420,7 +425,7 @@ void GateApplicationMgr::StartDAQ()
   //GateMessage("Acquisition", 0, "Simulation will generate " << mTotalNbOfParticles << " primaries.\n");
 
    // It's where we initialize the random engine for the entire simulation
-  GateRandomEngine* theRandomEngine = GateRandomEngine::GetInstance();
+  GateRandomEngine* theRandomEngine = GateRandomEngineFactory::GetRandomEngine();
   theRandomEngine->Initialize();
   if (theRandomEngine->GetVerbosity()>=1) theRandomEngine->ShowStatus();
 
@@ -483,8 +488,8 @@ void GateApplicationMgr::StartDAQ()
   if (mOutputMode) GateOutputMgr::GetInstance()->RecordEndOfAcquisition();
 
 
-  for(int nsource= 0 ; nsource<GateSourceMgr::GetInstance()->GetNumberOfSources() ; nsource++ )
-    GateMessage("Acquisition", 1, "Source "<<nsource+1<<" --> Number of events = "<<GateSourceMgr::GetInstance()->GetNumberOfEventBySource(nsource+1)<<G4endl);
+  for(int nsource= 0 ; nsource<GateSourceMgrFactory::GetSourceManager()->GetNumberOfSources() ; nsource++ )
+    GateMessage("Acquisition", 1, "Source "<<nsource+1<<" --> Number of events = "<<GateSourceMgrFactory::GetSourceManager()->GetNumberOfEventBySource(nsource+1)<<G4endl);
 
 }
 //------------------------------------------------------------------------------------------
@@ -504,7 +509,7 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
   ComputeTimeStop();
 
   // init sources if needed
-  GateSourceMgr::GetInstance()->Initialization();
+  GateSourceMgrFactory::GetSourceManager()->Initialization();
 
   if (listOfTimeSlice.size() == 0)
   {
@@ -532,7 +537,7 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
   GateMessage("Acquisition", 0, "Simulation will have  = " << listOfTimeSlice.size() << " run(s)\n");
 
   // It's where we initialize the random engine for the entire simulation
-  GateRandomEngine* theRandomEngine = GateRandomEngine::GetInstance();
+  GateRandomEngine* theRandomEngine = GateRandomEngineFactory::GetRandomEngine();
   theRandomEngine->Initialize();
   if (theRandomEngine->GetVerbosity()>=1) theRandomEngine->ShowStatus();
 
@@ -613,8 +618,8 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
   
   if (mOutputMode) GateOutputMgr::GetInstance()->RecordEndOfAcquisition();
 
-  for(int nsource= 0 ; nsource<GateSourceMgr::GetInstance()->GetNumberOfSources() ; nsource++ )
-    GateMessage("Acquisition", 1, "Source "<<nsource+1<<" --> Number of events = "<<GateSourceMgr::GetInstance()->GetNumberOfEventBySource(nsource+1)<<G4endl);
+  for(int nsource= 0 ; nsource<GateSourceMgrFactory::GetSourceManager()->GetNumberOfSources() ; nsource++ )
+    GateMessage("Acquisition", 1, "Source "<<nsource+1<<" --> Number of events = "<<GateSourceMgrFactory::GetSourceManager()->GetNumberOfEventBySource(nsource+1)<<G4endl);
 
   // ========================================================================================================
 }
@@ -706,5 +711,14 @@ void GateApplicationMgr::EnableTimeStudy(G4String filename)
 void GateApplicationMgr::EnableTimeStudyForSteps(G4String filename)
 {
   GateUserActions::GetUserActions()->EnableTimeStudyForSteps(filename);
+}
+//------------------------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------------------------
+#ifdef GATE_PARALLEL_MPI
+void GateApplicationMgr::SetJobSize(G4int value){
+	ParGateMPI::GetInstance()->SetNumberOfEvents(value);
+#endif
 }
 //------------------------------------------------------------------------------------------

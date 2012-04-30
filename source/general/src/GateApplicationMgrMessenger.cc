@@ -122,6 +122,11 @@ GateApplicationMgrMessenger::GateApplicationMgrMessenger()
   TimeStudyForStepsCmd = new G4UIcmdWithAString("/gate/application/enableStepAndTrackTimeStudy", this);
   TimeStudyForStepsCmd->SetGuidance("Activate the time measurement of steps and tracks (Slow down the simulation).");
   TimeStudyForStepsCmd->SetParameterName("File name",false);
+
+#ifdef GATE_PARALLEL_MPI
+  SetJobSizeCmd = new G4UIcmdWithAnInteger("/gate/application/setJobSize",this);
+  SetJobSizeCmd->SetGuidance("Set Parallel Gate number of Events Per Job");
+#endif
 }
 //-------------------------------------------------------------------------------------------------------------------
 
@@ -150,6 +155,9 @@ GateApplicationMgrMessenger::~GateApplicationMgrMessenger()
   delete AddSliceCmd;
   delete TimeStudyCmd;
   delete TimeStudyForStepsCmd;
+#ifdef GATE_PARALLEL_MPI
+  delete SetJobSizeCmd;
+#endif
 }
 //-------------------------------------------------------------------------------------------------------------------
 
@@ -221,5 +229,10 @@ void GateApplicationMgrMessenger::SetNewValue(G4UIcommand* command, G4String new
   else if (command == TimeStudyForStepsCmd) {
     appMgr->EnableTimeStudyForSteps(newValue);
   }
+#ifdef GATE_PARALLEL_MPI
+  else if (command == SetJobSizeCmd) {
+	  appMgr->SetJobSize(SetJobSizeCmd->GetNewIntValue(newValue));
+  }
+#endif
 }
 //-------------------------------------------------------------------------------------------------------------------

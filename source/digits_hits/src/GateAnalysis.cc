@@ -37,6 +37,7 @@
 #include "GateVVolume.hh"
 #include "GateActions.hh"
 #include "GateToRoot.hh"
+#include "GateSourceMgrFactory.hh"
 //--------------------------------------------------------------------------------------------------
 GateAnalysis::GateAnalysis(const G4String& name, GateOutputMgr* outputMgr,DigiMode digiMode) 
   : GateVOutputModule(name,outputMgr,digiMode)
@@ -356,9 +357,9 @@ if (  theMode == kDetector ) // in tracker mode we store the infos about the num
           // Source info         
           // DS : if gate source is not used (with /gate/EnableGeneralParticleSource)
           // there are no GateSource, so skip
-          if ((GateSourceMgr::GetInstance())->GetSourcesForThisEvent().size() == 0) return;
+          if ((GateSourceMgrFactory::GetSourceManager())->GetSourcesForThisEvent().size() == 0) return;
 
-          G4int sourceID = (((GateSourceMgr::GetInstance())->GetSourcesForThisEvent())[0])->GetSourceID();
+          G4int sourceID = (((GateSourceMgrFactory::GetSourceManager())->GetSourcesForThisEvent())[0])->GetSourceID();
           G4ThreeVector sourceVertex = m_trajectoryNavigator->FindSourcePosition();
   
           // Hits loop

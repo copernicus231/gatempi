@@ -17,7 +17,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateSourceVoxelLinearTranslator.hh"
 #include "GateSourceVoxelRangeTranslator.hh"
-#include "GateSourceMgr.hh"
+#include "GateSourceMgrFactory.hh"
 
 GateVSourceVoxelReader::GateVSourceVoxelReader(GateVSource* source)
   : m_source(source)
@@ -232,7 +232,7 @@ if ( m_TimeActivTables.empty() == true) { //G4cout << " GateVSourceVoxelReader::
 
 //ok we update for the current time all the activities for the translator
 
-G4double currentTime = GateSourceMgr::GetInstance()->GetTime()/s ;
+G4double currentTime = GateSourceMgrFactory::GetSourceManager()->GetTime()/s ;
 
  cK = (G4int)( floor( currentTime / ( GetTimeSampling()/s)  ) ) + 1;
 
@@ -316,7 +316,7 @@ if ( m_TimeActivTables.empty() == true) { G4cout << " GateVSourceVoxelReader::Up
 
 //ok we update for the current time all the activities for the translator
 
-G4double currentTime = GateSourceMgr::GetInstance()->GetTime()/s ;
+G4double currentTime = GateSourceMgrFactory::GetSourceManager()->GetTime()/s ;
 
 
 std::map< std::pair<G4double,G4double> , std::vector<std::pair<G4double,G4double> >  >::iterator iter;

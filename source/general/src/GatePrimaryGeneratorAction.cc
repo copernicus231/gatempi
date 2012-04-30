@@ -96,7 +96,7 @@ void GatePrimaryGeneratorAction::GenerateSimulationPrimaries(G4Event* event)
 {
   //! compute the right number of events per slice at this time 
   G4int eventID = event->GetEventID();
-  GateSourceMgr* sourceMgr = GateSourceMgr::GetInstance();
+  GateSourceMgr* sourceMgr = GateSourceMgrFactory::GetSourceManager();
   if (eventID==0) {
     const G4Run* currentRun = G4RunManager::GetRunManager()->GetCurrentRun();
     //if( currentRun->GetRunID()==0) sourceMgr->Initialization();

@@ -83,6 +83,10 @@ public:
   void EnableTimeStudy(G4String filename);
   void EnableTimeStudyForSteps(G4String filename);
 
+#ifdef GATE_PARALLEL_MPI
+  void SetJobSize(G4int value);
+#endif
+
 protected:
 
   GateApplicationMgr();

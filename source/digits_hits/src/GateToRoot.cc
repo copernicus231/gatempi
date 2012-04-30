@@ -35,7 +35,7 @@
 #include "GateSingleDigi.hh"
 #include "GateCoincidenceDigi.hh"
 #include "GateRecorderBase.hh"
-#include "GateSourceMgr.hh"
+#include "GateSourceMgrFactory.hh"
 #include "GateOutputMgr.hh"
 #include "GateVVolume.hh"
 #include "GateToRoot.hh"
@@ -622,7 +622,7 @@ if ( theMode == kTracker )return;
 
        
     if (m_recordFlag > 0) {
-      G4double eventTime = (GateSourceMgr::GetInstance())->GetTime();
+      G4double eventTime = (GateSourceMgrFactory::GetSourceManager())->GetTime();
       TH1F *hist;
       G4String hist_name;
       hist_name = "Positron_Kinetic_Energy_MeV";

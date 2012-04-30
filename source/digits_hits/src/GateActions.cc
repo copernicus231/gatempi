@@ -50,6 +50,7 @@
 
 #include "GateSteppingActionMessenger.hh"
 #include "GateCrystalSD.hh"
+#include "GateSourceMgrFactory.hh"
 
 GateRunAction* GateRunAction::prunAction=0;
 GateEventAction* GateEventAction::peventAction=0;
@@ -882,11 +883,11 @@ if ( fStartVolumeIsPhantomSD == true ) // the particle was created in a Phantom 
               fTrack->SetTrackStatus(fStpAKill);
               GateTrack* aTrack = new GateTrack();
               aTrack->Fill_Track( fTrack  );
-              aTrack->SetTime( GateSourceMgr::GetInstance()->GetTime() );
+              aTrack->SetTime( GateSourceMgrFactory::GetSourceManager()->GetTime() );
               aTrack->SetEventID(EventID);
               aTrack->SetRunID(RunID);
               aTrack->SetWasKilled(0);
-              aTrack->SetSourceID(  GateSourceMgr::GetInstance()->GetCurrentSourceID() );
+              aTrack->SetSourceID(  GateSourceMgrFactory::GetSourceManager()->GetCurrentSourceID() );
               PPTrackVector->push_back( aTrack );
                if ( m_verboseLevel > 3  )
                  {
@@ -924,11 +925,11 @@ if ( fStartVolumeIsPhantomSD == true ) // the particle was created in a Phantom 
                       fTrack->SetTrackStatus(fStpAKill);
                       GateTrack* aTrack = new GateTrack();
                       aTrack->Fill_Track( fTrack  );
-                      aTrack->SetTime( GateSourceMgr::GetInstance()->GetTime() );
+                      aTrack->SetTime( GateSourceMgrFactory::GetSourceManager()->GetTime() );
                       aTrack->SetEventID(EventID);
                       aTrack->SetRunID(RunID);
                       aTrack->SetWasKilled(0);
-                      aTrack->SetSourceID(  GateSourceMgr::GetInstance()->GetCurrentSourceID() );
+                      aTrack->SetSourceID(  GateSourceMgrFactory::GetSourceManager()->GetCurrentSourceID() );
                       PPTrackVector->push_back( aTrack );
                      }
                     }
@@ -964,11 +965,11 @@ if ( NxtVol  == m_StartingVolName )   // here we are still in the same volume fo
                //// in that case we also keep it because it is needed in GateTrajectoryNavigator methods
                GateTrack* aTrack = new GateTrack();
               aTrack->Fill_Track( fTrack  );
-              aTrack->SetTime( GateSourceMgr::GetInstance()->GetTime() );
+              aTrack->SetTime( GateSourceMgrFactory::GetSourceManager()->GetTime() );
               aTrack->SetEventID(EventID);
               aTrack->SetRunID(RunID);
               aTrack->SetWasKilled(1);  /// the primary particle was killed during stepping inside the phantom !
-              aTrack->SetSourceID(  GateSourceMgr::GetInstance()->GetCurrentSourceID() );
+              aTrack->SetSourceID(  GateSourceMgrFactory::GetSourceManager()->GetCurrentSourceID() );
               PPTrackVector->push_back( aTrack );
              if ( m_verboseLevel > 0 )
                {
@@ -1344,11 +1345,11 @@ if ( fStartVolumeIsPhantomSD == true ) // the particle was created in a Phantom 
               fTrack->SetTrackStatus(fStpAKill);
               GateTrack* aTrack = new GateTrack();
               aTrack->Fill_Track( fTrack  );
-              aTrack->SetTime( GateSourceMgr::GetInstance()->GetTime() );
+              aTrack->SetTime( GateSourceMgrFactory::GetSourceManager()->GetTime() );
               aTrack->SetEventID(EventID);
               aTrack->SetRunID(RunID);
               aTrack->SetWasKilled(0);
-              aTrack->SetSourceID(  GateSourceMgr::GetInstance()->GetCurrentSourceID() );
+              aTrack->SetSourceID(  GateSourceMgrFactory::GetSourceManager()->GetCurrentSourceID() );
               PPTrackVector->push_back( aTrack );
                if ( m_verboseLevel > 3  )
                  {
@@ -1386,11 +1387,11 @@ if ( fStartVolumeIsPhantomSD == true ) // the particle was created in a Phantom 
                       fTrack->SetTrackStatus(fStpAKill);
                       GateTrack* aTrack = new GateTrack();
                       aTrack->Fill_Track( fTrack  );
-                      aTrack->SetTime( GateSourceMgr::GetInstance()->GetTime() );
+                      aTrack->SetTime( GateSourceMgrFactory::GetSourceManager()->GetTime() );
                       aTrack->SetEventID(EventID);
                       aTrack->SetRunID(RunID);
                       aTrack->SetWasKilled(0);
-                      aTrack->SetSourceID(  GateSourceMgr::GetInstance()->GetCurrentSourceID() );
+                      aTrack->SetSourceID(  GateSourceMgrFactory::GetSourceManager()->GetCurrentSourceID() );
                       PPTrackVector->push_back( aTrack );
                      }
                     }
@@ -1426,11 +1427,11 @@ if ( NxtVol  == m_StartingVolName )   // here we are still in the same volume fo
                //// in that case we also keep it because it is needed in GateTrajectoryNavigator methods
                GateTrack* aTrack = new GateTrack();
               aTrack->Fill_Track( fTrack  );
-              aTrack->SetTime( GateSourceMgr::GetInstance()->GetTime() );
+              aTrack->SetTime( GateSourceMgrFactory::GetSourceManager()->GetTime() );
               aTrack->SetEventID(EventID);
               aTrack->SetRunID(RunID);
               aTrack->SetWasKilled(1);  /// the primary particle was killed during stepping inside the phantom !
-              aTrack->SetSourceID(  GateSourceMgr::GetInstance()->GetCurrentSourceID() );
+              aTrack->SetSourceID(  GateSourceMgrFactory::GetSourceManager()->GetCurrentSourceID() );
               PPTrackVector->push_back( aTrack );
              if ( m_verboseLevel > 0 )
                {

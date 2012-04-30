@@ -3,7 +3,7 @@
 #include "GateRTPhantom.hh"
 #include "GateRTPhantomMessenger.hh"
 #include "GateObjectStore.hh"
-#include "GateSourceMgr.hh"
+#include "GateSourceMgrFactory.hh"
 #include "GateVoxelBoxParameterized.hh"
 #include "GateCompressedVoxelParameterized.hh"
 #include "GateSourceVoxellized.hh"
@@ -54,7 +54,7 @@ if ( IsEnabled == 0 )
 G4cout << " The Object RTPhantom " << m_name << " is NOT enabled. You cannot attach it to a Source. IGNORED" << G4endl;
 return;
 }
-GateVSource *Source = GateSourceMgr::GetInstance()->GetSourceByName(aname);
+GateVSource *Source = GateSourceMgrFactory::GetSourceManager()->GetSourceByName(aname);
 
 if ( Source !=0 && IsVoxellized == 1 )
    { GateSourceVoxellized * SourceVoxl = (GateSourceVoxellized *) Source;

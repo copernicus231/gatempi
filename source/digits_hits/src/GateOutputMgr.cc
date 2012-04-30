@@ -41,6 +41,9 @@
 #include "GateToRootPlotter.hh"
 
 #include "GateMessageManager.hh"
+#include "GateToRootFactory.hh"
+#include "GateToASCIIFactory.hh"
+#include "GateRandomEngineFactory.hh"
 
 GateOutputMgr* GateOutputMgr::instance = 0;
 
@@ -100,7 +103,7 @@ GateOutputMgr::GateOutputMgr(const G4String name)
   AddOutputModule((GateVOutputModule*)gateToDigi);
 
 #ifdef G4ANALYSIS_USE_FILE
-  GateToASCII* gateToASCII = new GateToASCII("ascii", this, m_digiMode);
+  GateToASCII* gateToASCII = GateToASCIIFactory::GetGateToASCII("ascii", this, m_digiMode);
   AddOutputModule((GateVOutputModule*)gateToASCII);
 	// For BINARY output
   GateVOutputModule* gateToBinary = new GateToBinary( "binary", this,
@@ -109,7 +112,7 @@ GateOutputMgr::GateOutputMgr(const G4String name)
 #endif
   
 #ifdef G4ANALYSIS_USE_ROOT
-  GateToRoot* gateToRoot = new GateToRoot("root", this,m_digiMode);
+  GateToRoot* gateToRoot = GateToRootFactory::GetGateToRoot("root", this,m_digiMode);
   AddOutputModule((GateVOutputModule*)gateToRoot);
   GateARFDataToRoot* gateARFDataToRoot = new GateARFDataToRoot("arf", this,m_digiMode);
   AddOutputModule((GateVOutputModule*)gateARFDataToRoot);
@@ -193,7 +196,7 @@ void GateOutputMgr::RecordBeginOfRun(const G4Run* run)
   GateMessage("Output", 5, "GateOutputMgr::RecordBeginOfRun" << G4endl;);
  
   // If the verbosity for the random engine is set, we call the status method
-  GateRandomEngine* theRandomEngine = GateRandomEngine::GetInstance();
+  GateRandomEngine* theRandomEngine = GateRandomEngineFactory::GetRandomEngine();
   if (theRandomEngine->GetVerbosity()>=2) theRandomEngine->ShowStatus();
 
   if (nVerboseLevel > 2)

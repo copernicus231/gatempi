@@ -21,7 +21,7 @@
 #include "GateMessageManager.hh"
 #include "Randomize.hh"
 #include "GateObjectStore.hh"
-#include "GateSourceMgr.hh"
+#include "GateSourceMgrFactory.hh"
 #include "GateMiscFunctions.hh"
 #include "GateActions.hh"
 #include "GateToRoot.hh"
@@ -532,12 +532,12 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
           m_sourceID = (*iter)->GetSourceID(); // we set the source ID to the current one
           if ( m_sourceID != m_previous_SourceID )
             { G4cout << "GateSource::GeneratePrimaries :::: ERROR "<< G4endl;
-              G4cout << "GateSource::GeneratePrimaries :::: Run ID " << RunID << " Event ID " << eventID <<" source ID " << m_sourceID << " event Time " <<  (GateSourceMgr::GetInstance())->GetTime()/s << "  track ID " << TrackID << "   parent ID " << ParentID <<    G4endl;
+              G4cout << "GateSource::GeneratePrimaries :::: Run ID " << RunID << " Event ID " << eventID <<" source ID " << m_sourceID << " event Time " <<  (GateSourceMgrFactory::GetSourceManager())->GetTime()/s << "  track ID " << TrackID << "   parent ID " << ParentID <<    G4endl;
               if ( k == aTrackVector->size() ){G4Exception("The sources ID of primaries do not correspond");}
             }
 
           G4double eventTime = (*iter)->GetTime();
-          (GateSourceMgr::GetInstance())->SetTime( eventTime );
+          (GateSourceMgrFactory::GetSourceManager())->SetTime( eventTime );
           SetTime(eventTime);
           /// we generate 1 particle for each  PrimaryVertex we got from Tracks Root file
           G4ParticleTable  *particleTable = G4ParticleTable::GetParticleTable();

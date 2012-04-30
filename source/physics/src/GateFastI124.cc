@@ -11,7 +11,7 @@ See GATE/LICENSE.txt for further details
 #include "GateFastI124.hh"
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
-#include "GateSourceMgr.hh"
+#include "GateSourceMgrFactory.hh"
 
 GateFastI124::GateFastI124( GateVSource* source )
 {
@@ -99,9 +99,9 @@ void GateFastI124::GenerateVertex( G4Event* aEvent )
 	{
 		// 0 generated particles is not accept by the software. Generate a vertex
 		// until the number of particle at least 1. And increment the time if 0
-		G4double time = (GateSourceMgr::GetInstance())->GetTime();
+		G4double time = (GateSourceMgrFactory::GetSourceManager())->GetTime();//TODO CHECK CONGRUENCE
 		G4double nextTime = m_source->GetNextTime( time );
-		(GateSourceMgr::GetInstance())->SetTime( time + nextTime );
+		(GateSourceMgrFactory::GetSourceManager())->SetTime( time + nextTime );
 		m_source->SetTime( time + nextTime );
 		GenerateVertex( aEvent );
 	}

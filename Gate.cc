@@ -13,7 +13,7 @@
 
 #include "GateDetectorConstruction.hh"
 #include "GatePhysicsList.hh"
-#include "GatePrimaryGeneratorAction.hh"
+#include "GatePrimaryGeneratorActionFactory.hh"
 #include "GateUserActions.hh"
 #include "GateRandomEngine.hh"
 
@@ -39,6 +39,12 @@
 
 #ifdef G4VIS_USE
 #include "G4VisExecutive.hh"
+#endif
+
+#include "GateRandomEngineFactory.hh"
+
+#ifdef GATE_PARALLEL_MPI
+#include "ParGateMPI.hh"
 #endif
 
 #ifndef G4ANALYSIS_USE_ROOT
@@ -177,6 +183,14 @@ void Welcome() {
 //-------------------------------------------------------------------------------------
 int main(int argc,char** argv)
 {
+#ifdef GATE_PARALLEL_MPI
+	try{
+		ParGateMPI::GetInstance(argc,argv);
+	}catch(GateMPIException &e){
+		GateMessage("MPI_GATE",0,e.GetMsg());
+		return -1;
+	}
+#endif
   // First of all, set the G4cout to our message manager
   GateMessageManager * theGateMessageManager = GateMessageManager::GetInstance();
   G4UImanager::GetUIpointer()->SetCoutDestination(theGateMessageManager);
@@ -197,7 +211,7 @@ int main(int argc,char** argv)
 
 
   // random engine
-  GateRandomEngine* randomEngine = GateRandomEngine::GetInstance();
+  GateRandomEngine* randomEngine = GateRandomEngineFactory::GetRandomEngine();
 
   // Call the argument decoding function
   DecodeArguments(argc,argv);
@@ -206,7 +220,7 @@ int main(int argc,char** argv)
   GateSignalHandler::Install();
 
   // Construct the default run manager
-  GateRunManager* runManager = new GateRunManager;  
+  GateRunManager* runManager = GateRunManagerFactory::GetRunManager();
 
   // Set the Basic ROOT Output
 GateRecorderBase* myRecords = 0;
@@ -237,7 +251,7 @@ GateRecorderBase* myRecords = 0;
 
  // Incorporate the user actions
   // Set the particles generator
-  runManager->SetUserAction(new GatePrimaryGeneratorAction());  
+  runManager->SetUserAction(GatePrimaryGeneratorActionFactory::GetPrimaryGeneratorAction());
 
   // Set the users actions to handle callback for actors - before the initialisation
   //new GateUserActions(runManager, myRecords);
@@ -259,7 +273,7 @@ GateRecorderBase* myRecords = 0;
   AbortIfRootNotFound();
 #endif
 
-  GateSourceMgr*      sourceMgr = GateSourceMgr::GetInstance();
+  GateSourceMgr*      sourceMgr = GateSourceMgrFactory::GetSourceManager();
   GateApplicationMgr* appMgr    = GateApplicationMgr::GetInstance();
   GateClock::GetInstance()->SetTime(0);
   GateUIcontrolMessenger* controlMessenger = new GateUIcontrolMessenger;
@@ -341,7 +355,9 @@ GateRecorderBase* myRecords = 0;
   delete randomEngine;
   delete myRecords;
   delete controlMessenger;
-
+#ifdef GATE_PARALLEL_MPI
+  ParGateMPI::DestroyInstance();
+#endif
   return 0;
 }
 //-------------------------------------------------------------------------------------
