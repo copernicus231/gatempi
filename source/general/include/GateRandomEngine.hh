@@ -39,7 +39,7 @@ public:
   void ShowStatus();
   virtual void Initialize();
 
-private:
+protected:
   // Private constructor because the class is a singleton
   GateRandomEngine();
   static GateRandomEngine* instance;
