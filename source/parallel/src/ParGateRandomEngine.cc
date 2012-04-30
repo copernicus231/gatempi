@@ -18,6 +18,7 @@
 #include "ParGateRandomEngine.hh"
 #include "CLHEP/Random/SprngRandom.h"
 #include "globals.hh"
+#include "ParGateMPI.hh"
 
 ParGateRandomEngine::ParGateRandomEngine() :
 		GateRandomEngine() {
