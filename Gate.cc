@@ -42,6 +42,8 @@
 #endif
 
 #include "GateRandomEngineFactory.hh"
+#include "GateRunManagerFactory.hh"
+#include "GateSourceMgrFactory.hh"
 
 #ifdef GATE_PARALLEL_MPI
 #include "ParGateMPI.hh"
