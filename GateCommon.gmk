@@ -94,9 +94,6 @@ endif
 
 CPPFLAGS := $(filter-out -I/usr/include , $(CPPFLAGS))
 
-#ADD CONDITIONAL FOR MPI COMPILATION
-CPPFLAGS += $(shell mpic++ --showme:compile)
-EXTRALIBS += $(shell mpic++ --showme:link)
 
 
 
