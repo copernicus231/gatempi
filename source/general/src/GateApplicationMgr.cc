@@ -24,6 +24,7 @@ See GATE/LICENSE.txt for further details
 #include "GateSourceMgr.hh"
 #include "GateOutputMgr.hh"
 #include "GateRandomEngineFactory.hh"
+#include "GateSourceMgrFactory.hh"
 
 #ifdef GATE_PARALLEL_MPI
 #include "ParGateMPI.hh"
