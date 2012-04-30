@@ -26,6 +26,7 @@ See GATE/LICENSE.txt for further details
 #include "GateApplicationMgr.hh"
 
 #include "GateSourceMgr.hh"
+#include "GateSourceMgrFactory.hh"
 //#include "GateOutputMgr.hh"
 //#include "GateHitFileReader.hh"
 
