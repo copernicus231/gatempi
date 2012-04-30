@@ -20,6 +20,7 @@
 #ifdef GATE_PARALLEL_MPI
 
 #include "ParGateToRoot.hh"
+#include "ParGateMPI.hh"
 
 GateToRoot* GateToRootFactory::GetGateToRoot(const G4String& name,
 		GateOutputMgr* outputMgr, DigiMode digiMode) {

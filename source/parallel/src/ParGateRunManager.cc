@@ -52,7 +52,7 @@
 #include "G4Region.hh"
 #include "ParGateMPI.hh"
 #include "ParGateSourceMgr.hh"
-#include "SourceMgrFactory.hh"
+#include "GateSourceMgrFactory.hh"
 #include <mpi.h>
 
 ParGateRunManager::ParGateRunManager() :

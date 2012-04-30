@@ -21,6 +21,7 @@
 #ifdef GATE_PARALLEL_MPI
 
 #include "ParGateToASCII.hh"
+#include "ParGateMPI.hh"
 
 GateToASCII* GateToASCIIFactory::GetGateToASCII(const G4String& name,
 		GateOutputMgr* outputMgr, DigiMode digiMode) {
