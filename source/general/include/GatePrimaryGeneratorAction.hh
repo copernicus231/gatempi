@@ -38,7 +38,7 @@ public:
   void SetVerboseLevel(G4int value);
   void EnableGPS(G4bool b) { m_useGPS = b; }
 
-private:
+protected:
   G4GeneralParticleSource*       m_particleGun;
   G4String                       m_rndmFlag;	    //flag for a random impact point 
   GatePrimaryGeneratorMessenger* m_messenger;
