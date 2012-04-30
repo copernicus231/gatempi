@@ -17,7 +17,7 @@
 #include "ParGatePrimaryGeneratorAction.hh"
 #include "G4Types.hh"
 #include "GateSourceMgr.hh"
-#include "SourceMgrFactory.hh"
+#include "GateSourceMgrFactory.hh"
 #include "G4RunManager.hh"
 #include "G4PrimaryParticle.hh"
 

@@ -34,7 +34,6 @@ private:
 	friend class GateToASCIIFactory;
 };
 
-#endif
 #endif /* PARGATETOASCII_HH */
 
 #endif
