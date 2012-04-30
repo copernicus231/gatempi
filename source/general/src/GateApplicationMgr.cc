@@ -720,6 +720,6 @@ void GateApplicationMgr::EnableTimeStudyForSteps(G4String filename)
 #ifdef GATE_PARALLEL_MPI
 void GateApplicationMgr::SetJobSize(G4int value){
 	ParGateMPI::GetInstance()->SetNumberOfEvents(value);
-#endif
 }
+#endif
 //------------------------------------------------------------------------------------------
