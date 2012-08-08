@@ -20,6 +20,7 @@
 #include "ParGateToASCII.hh"
 #include "ParGateMPI.hh"
 #include <sstream>
+#include "GateOutputMgr.hh"
 
 ParGateToASCII::ParGateToASCII(const G4String& name, GateOutputMgr* outputMgr,
 		DigiMode digiMode) :
@@ -31,10 +32,21 @@ ParGateToASCII::~ParGateToASCII() {
 
 }
 
+void ParGateToASCII::Enable(G4bool val){
+	if(ParGateMPI::GetInstance()->GetSourceWorldRank() == 0){
+		GateToASCII::Enable(false);
+		m_outputMgr->AllowNoOutput();
+		return;
+	}
+	GateToASCII::Enable(val);
+}
+
 void ParGateToASCII::SetFileName(const G4String aName) {
-	std::stringstream sNumber;
-	sNumber << ParGateMPI::GetInstance()->GetSourceWorldRank();
-	GateToASCII::SetFileName(aName + sNumber.str());
+	if(ParGateMPI::GetInstance()->GetSourceWorldRank() != 0){
+		std::stringstream sNumber;
+		sNumber << ParGateMPI::GetInstance()->GetSourceWorldRank();
+		GateToASCII::SetFileName(aName + sNumber.str());
+	}
 }
 
 #endif

@@ -30,6 +30,7 @@ protected:
 public:
 	virtual ~ParGateToASCII();
 	void SetFileName(const G4String aName);
+	void Enable(G4bool val);
 private:
 	friend class GateToASCIIFactory;
 };

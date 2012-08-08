@@ -34,6 +34,10 @@ void ParGateRandomEngine::Initialize() {
 		delete theRandomEngine;
 		SetRandomEngine("SprngMLFG");
 	}
+	if(theSeedFile != " "){
+		int stream_id = ParGateMPI::GetInstance()->GetSourceWorldRank();
+		theSeedFile.append(stream_id);
+	}
 	GateRandomEngine::Initialize();
 }
 

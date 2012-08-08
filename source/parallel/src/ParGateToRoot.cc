@@ -20,6 +20,7 @@
 #include "ParGateToRoot.hh"
 #include "ParGateMPI.hh"
 #include <sstream>
+#include "GateOutputMgr.hh"
 
 ParGateToRoot::ParGateToRoot(const G4String& name, GateOutputMgr* outputMgr,
 		DigiMode digiMode) :
@@ -30,10 +31,21 @@ ParGateToRoot::~ParGateToRoot() {
 
 }
 
+void ParGateToRoot::Enable(G4bool val){
+	if(ParGateMPI::GetInstance()->GetSourceWorldRank() == 0){
+		GateToRoot::Enable(false);
+		m_outputMgr->AllowNoOutput();
+		return;
+	}
+	GateToRoot::Enable(val);
+}
+
 void ParGateToRoot::SetFileName(const G4String aName) {
-	std::stringstream sNumber;
-	sNumber << ParGateMPI::GetInstance()->GetSourceWorldRank();
-	GateToRoot::SetFileName(aName + sNumber.str());
+	if(ParGateMPI::GetInstance()->GetSourceWorldRank() != 0){
+		std::stringstream sNumber;
+		sNumber << ParGateMPI::GetInstance()->GetSourceWorldRank();
+		GateToRoot::SetFileName(aName + sNumber.str());
+	}
 }
 
 #endif
