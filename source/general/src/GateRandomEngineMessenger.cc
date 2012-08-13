@@ -32,17 +32,20 @@ GateRandomEngineMessenger::GateRandomEngineMessenger(GateRandomEngine* gateRando
   G4String  cmdEngineSeed = GetDirectoryName()+"setEngineSeed";
   G4String  cmdEngineVerbose = GetDirectoryName()+"verbose";
   G4String  cmdEngineFromFile = GetDirectoryName()+"resetEngineFrom"; //TC
+  G4String  cmdEngineSeedIntoFile = GetDirectoryName()+"saveEngineInto"; //Ziad
   //!< Set the G4UI commands
   GetEngineNameCmd = new G4UIcmdWithAString(cmdEngineName,this);
   GetEngineSeedCmd = new G4UIcmdWithAString(cmdEngineSeed,this);
   GetEngineVerboseCmd = new G4UIcmdWithAnInteger(cmdEngineVerbose,this);
   GetEngineFromFileCmd = new G4UIcmdWithAString(cmdEngineFromFile,this); //TC
+  GetEngineIntoFileCmd = new G4UIcmdWithAString(cmdEngineSeedIntoFile,this); //Ziad
   //!< Set the guidance for those G4UI commands
   GetEngineNameCmd->SetGuidance("Set the type of the random engine");
   G4String seedGuidance = "Set the seed of the random engine:\n   - default (set the seed to the default CLHEP internal value, always the same)\n   - auto (the seed is automatically and randomly generated using the CPU time and the process ID of the Gate instance)\n   - aValue (the seed is manually set by the users, just give a long unsigned int included in [0,900000000])";
   GetEngineSeedCmd->SetGuidance(seedGuidance);
   GetEngineVerboseCmd->SetGuidance("Set the verbosity of the random engine, from 0 to 2:\n   - 0 is quiet\n   - 1 is printing one time at the beggining of the acquisition   - 2 is printing at each beginning of run");
   GetEngineFromFileCmd->SetGuidance("Set the seed from a file. Specify the entire path of the file"); //TC
+  GetEngineIntoFileCmd->SetGuidance("Save the engine status into a file. Specify the entire path of the file"); //Ziad
 }
 
 //////////////////
@@ -56,6 +59,7 @@ GateRandomEngineMessenger::~GateRandomEngineMessenger()
   delete GetEngineSeedCmd;
   delete GetEngineVerboseCmd;
   delete GetEngineFromFileCmd; //TC
+  delete GetEngineIntoFileCmd; // Ziad
 }
 
 ///////////////////
@@ -73,5 +77,7 @@ void GateRandomEngineMessenger::SetNewValue(G4UIcommand* command,G4String newVal
     { m_gateRandomEngine->SetVerbosity(GetEngineVerboseCmd->GetNewIntValue(newValue)); }
   else if(command == GetEngineFromFileCmd) //TC
     { m_gateRandomEngine->resetEngineFrom(newValue); } //TC
+  else if(command == GetEngineIntoFileCmd) //Ziad
+    { m_gateRandomEngine->saveEngineInto(newValue); } //Ziad
 }
 

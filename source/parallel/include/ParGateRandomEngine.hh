@@ -29,6 +29,7 @@ public:
 	virtual ~ParGateRandomEngine();
 	virtual void Initialize();
 	virtual void SetRandomEngine(const G4String& aName);
+	virtual void saveEngineInto(const G4String& file);
 
 private:
 	friend class GateRandomEngineFactory;

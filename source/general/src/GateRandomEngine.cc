@@ -40,6 +40,7 @@ GateRandomEngine::GateRandomEngine()
   theVerbosity = 0;
   theSeed="default";
   theSeedFile=" ";
+  theSaveFile=" ";
   // Create the messenger
   theMessenger = new GateRandomEngineMessenger(this);  
   
@@ -53,6 +54,9 @@ GateRandomEngine::GateRandomEngine()
 //!< Destructor
 GateRandomEngine::~GateRandomEngine()
 {
+  if(theSaveFile != " "){
+	  theRandomEngine->saveStatus(theSaveFile);
+  }
   delete theRandomEngine;
   delete theMessenger;
 }
@@ -124,6 +128,14 @@ void GateRandomEngine::SetEngineSeed(const G4String& value) {
 void GateRandomEngine::resetEngineFrom(const G4String& file) { //TC
   theSeedFile = file;
 } 
+
+/////////////////////
+//  saveEngineSeed into file //
+/////////////////////
+//!< void saveEngineSeedInto
+void GateRandomEngine::saveEngineInto(const G4String& file) { //Ziad
+	theSaveFile = file;
+}
 
 
 //////////////////

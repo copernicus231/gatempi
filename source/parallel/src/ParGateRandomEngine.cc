@@ -35,10 +35,20 @@ void ParGateRandomEngine::Initialize() {
 		SetRandomEngine("SprngMLFG");
 	}
 	if(theSeedFile != " "){
-		int stream_id = ParGateMPI::GetInstance()->GetSourceWorldRank();
-		theSeedFile.append(stream_id);
+		std::stringstream sNumber;
+		sNumber << ParGateMPI::GetInstance()->GetSourceWorldRank();
+		theSeedFile.append(sNumber.str());
 	}
 	GateRandomEngine::Initialize();
+}
+
+void ParGateRandomEngine::saveEngineInto(const G4String& file){
+	G4String filePerProcess;
+	std::stringstream sNumber;
+	sNumber << ParGateMPI::GetInstance()->GetSourceWorldRank();
+	filePerProcess=file;
+	filePerProcess.append(sNumber.str());
+	GateRandomEngine::saveEngineInto(filePerProcess);
 }
 
 void ParGateRandomEngine::SetRandomEngine(const G4String& aName) {

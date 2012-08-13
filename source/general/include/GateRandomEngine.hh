@@ -36,6 +36,7 @@ public:
   virtual void SetRandomEngine(const G4String& aName);
   void SetEngineSeed(const G4String& value);
   void resetEngineFrom(const G4String& file); //TC
+  virtual void saveEngineInto(const G4String& file); //Ziad
   void ShowStatus();
   virtual void Initialize();
 
@@ -48,6 +49,7 @@ protected:
   GateRandomEngineMessenger* theMessenger;
   G4String theSeed;
   G4String theSeedFile; //TC
+  G4String theSaveFile;
   friend class GateRandomEngineFactory;
 };
 

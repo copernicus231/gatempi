@@ -34,6 +34,7 @@ private:
   G4UIcmdWithAString* GetEngineNameCmd;
   G4UIcmdWithAString* GetEngineSeedCmd;
   G4UIcmdWithAString* GetEngineFromFileCmd; //TC
+  G4UIcmdWithAString* GetEngineIntoFileCmd;// Ziad
   G4UIcmdWithAnInteger* GetEngineVerboseCmd;
   GateRandomEngine* m_gateRandomEngine;
 };
